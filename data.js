@@ -21,7 +21,11 @@ const makePH = (i, label) => {
   </svg>`;
   return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
 };
-const P = Array.from({length: 17}, (_, i) => makePH(i, '相片 ' + (i + 1)));
+const REAL_IMGS = [
+  'img/x_avatar.jpg', 'img/x070.png', 'img/x066.png', 'img/x071.png',
+  'img/x052.png', 'img/x067.png', 'img/x069.png', 'img/wallpaper.jpg'
+];
+const P = Array.from({length: 17}, (_, i) => REAL_IMGS[i % REAL_IMGS.length]);
 
 // 日历事件
 const E = {};

@@ -13,7 +13,8 @@ html,body{height:100%;background:#0d0d0f;font-family:-apple-system,"PingFang SC"
 #c *{scrollbar-width:none;-ms-overflow-style:none}
 #sb{position:absolute;top:0;left:0;right:0;height:48px;z-index:9;display:flex;justify-content:space-between;padding:16px 30px 0 34px;font-weight:600;font-size:16px;color:#fff;mix-blend-mode:difference;pointer-events:none}
 #di{position:absolute;top:11px;left:50%;width:110px;height:32px;margin-left:-55px;background:#000;border-radius:16px;z-index:8}
-#hb{position:absolute;bottom:6px;left:50%;width:130px;height:6px;margin-left:-65px;border-radius:3px;background:#999;z-index:9;cursor:pointer}
+#hb{position:absolute;bottom:0;left:0;right:0;height:22px;z-index:10;cursor:pointer;background:transparent;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+#hb::before{content:"";display:block;width:130px;height:6px;border-radius:3px;background:#999}
 .hm{position:absolute;inset:0;background:#000 url(img/wallpaper.jpg) center/cover;padding:80px 18px;color:#fff}
 .hm::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15) 0%,rgba(0,0,0,.0) 30%,rgba(0,0,0,.0) 70%,rgba(0,0,0,.35) 100%);pointer-events:none}
 .g{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 8px;font-size:11px;text-align:center}
@@ -218,7 +219,7 @@ html,body{height:100%;background:#0d0d0f;font-family:-apple-system,"PingFang SC"
   <div id="c"></div>
   <div id="hb" onclick="hbk()"></div>
 </div>
-<script src="data.js?v=7"></script>
+<script src="data.js?v=8"></script>
 <script>
 const $ = s => document.querySelector(s);
 const T = T_TIME;
@@ -387,6 +388,19 @@ R.cs = () => {
 R.home = () => `<div class="hm"><div class="wg"><div><div class="w1" onclick="go('wt')"><b>北京</b><div><span class="t">15°</span><br><small>多云<br>最高:21° 最低:12°</small></div></div><p>天气</p></div><div><div class="w2" onclick="go('pt')" style="background:url(${P[7]}) center/cover"></div><p>照片</p></div></div><div class="g">${APPS.filter(a => !DOCK.includes(a[3])).map(a => ic(a)).join('')}</div><div class="dock">${DOCK.map(i => ic(APPS.find(a => a[3] == i), 1)).join('')}</div></div>`;
 
 const hbk = () => go(U ? 'home' : 'lk');
+// 手机端上滑返回主屏手势
+(function () {
+  const el = document.getElementById('hb');
+  if (!el) return;
+  let sy = null;
+  el.addEventListener('touchstart', e => { sy = e.touches[0].clientY; }, { passive: true });
+  el.addEventListener('touchend', e => {
+    if (sy == null) return;
+    const dy = sy - e.changedTouches[0].clientY;
+    sy = null;
+    if (dy > 20) hbk();
+  }, { passive: true });
+})();
 const dots = () => [0, 1, 2, 3].map(i => `<i class="${i < pin.length ? 'f' : ''}"></i>`).join('');
 
 R.lk = () => `<div class="lk" onclick="go('pc')"><div style="font-size:21px;font-weight:600;margin-top:70px">${T_DATE}</div><div style="font-size:104px;font-weight:700;line-height:1.05;letter-spacing:-2px">${T_CLOCK}</div><div class="lb" style="left:48px"><svg viewBox="0 0 24 24" width="26"><path d="M8 2h8v4l-2 3v11a1 1 0 01-1 1h-2a1 1 0 01-1-1V9L8 6z" fill="#fff"/></svg></div><div class="lb" style="right:48px"><svg viewBox="0 0 24 24" width="28"><path d="M4 8h3l2-3h6l2 3h3v11H4z" fill="#fff"/><circle cx="12" cy="13" r="3.5" fill="#666"/></svg></div></div>`;
