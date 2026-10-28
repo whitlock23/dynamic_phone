@@ -94,6 +94,20 @@ html,body{height:100%;background:#0d0d0f;font-family:-apple-system,"PingFang SC"
 .in2{display:flex;gap:10px;align-items:center;padding:8px 12px 30px}
 .in2 b{width:42px;height:42px;border-radius:50%;background:#fff;box-shadow:0 2px 8px #0002;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:300}
 .in2 span{flex:1;border-radius:22px;background:#fff;box-shadow:0 2px 8px #0002;padding:11px 16px;color:#aaa;font-size:16px}
+/* 短信聊天 */
+.smv{background:#f5f5f7}
+.smls{padding:6px 12px 10px;display:flex;flex-direction:column;gap:3px}
+.smt{align-self:center;font-size:11px;color:#8e8e93;margin:10px 0 4px;font-weight:500}
+.smrow{display:flex;align-items:flex-end;gap:6px;max-width:85%}
+.smL{align-self:flex-start}
+.smR{align-self:flex-end;flex-direction:row-reverse}
+.smrow .smav{width:30px;height:30px;border-radius:50%;flex:none}
+.smrow p{padding:9px 13px;border-radius:19px;font-size:15px;line-height:1.38;max-width:100%;word-break:break-word;white-space:pre-wrap}
+.smL p{background:#fff;color:#111;border:1px solid #ececf0;border-bottom-left-radius:6px}
+.smR p{background:#fee500;color:#111;border-bottom-right-radius:6px}
+.smrow p.smph,.smrow p.smst{padding:0;background:transparent!important;border:0;box-shadow:none}
+.smrow p.smph img{display:block;width:200px;max-width:100%;border-radius:16px}
+.smrow p.smst img{display:block;width:110px;height:110px;object-fit:contain;background:transparent}
 .ic2{position:absolute;inset:0;background:linear-gradient(#59616d,#20242c);color:#fff;text-align:center;padding-top:150px;animation:in .25s}
 .cb{position:absolute;bottom:110px;width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer}
 .sub,.sub2{min-height:84px;margin:36px 28px 0;font-size:16px;line-height:1.55;color:#ddd;padding:0 2px;text-align:left}
@@ -219,7 +233,7 @@ html,body{height:100%;background:#0d0d0f;font-family:-apple-system,"PingFang SC"
   <div id="c"></div>
   <div id="hb" onclick="hbk()"></div>
 </div>
-<script src="data.js?v=8"></script>
+<script src="data.js?v=9"></script>
 <script>
 const $ = s => document.querySelector(s);
 const T = T_TIME;
@@ -428,9 +442,23 @@ R.kk = () => `<div class="s dk"><div class="hd" style="font-size:24px"><span>聊
 
 R.kc = () => `<div class="s kb"><div class="hd" style="padding-top:8px"><b onclick="go('kk')" style="width:auto;font-size:22px">‹ 12</b><span>${CH[cc].n}</span><span style="letter-spacing:8px;font-weight:400">⌕☰</span></div><div class="ms" id="ms"><div class="dv">${T_LABEL}</div>${grp()}</div><div class="in"><b onclick="${cc == 'kc' ? 'sheet(1)' : ''}">＋</b><input id="ti" placeholder="输入消息" onkeydown="if(event.key=='Enter')snd()"><b class="sd" onclick="snd()">↑</b></div>${cc == 'kc' ? SHEET : ''}</div>`;
 
-R.sm = () => `<div class="s"><div class="hd" style="font-size:28px"><span>短信</span></div><div class="ls">${S.map((x, i) => `<div class="r" onclick="S[${i}][3]='';go('st',${i})"><span class="u" style="visibility:${x[3] ? 'visible' : 'hidden'}"></span><span class="av" style="background:#c7c7cc;border-radius:22px"></span><div><b>${x[0]}</b><p>${x[1]}</p></div><small>${x[2]}</small></div>`).join('')}</div></div>`;
+R.sm = () => `<div class="s"><div class="hd" style="font-size:28px"><span>短信</span></div><div class="ls">${S.map((x, i) => `<div class="r" onclick="S[${i}][3]='';go('st',${i})"><span class="u" style="visibility:${x[3] ? 'visible' : 'hidden'}"></span><span class="av" style="border-radius:22px;background:#eee${x[4] ? ';background-image:url(' + x[4] + ');background-size:cover;background-position:center' : ''}"></span><div><b>${x[0]}</b><p>${x[1]}</p></div><small>${x[2]}</small></div>`).join('')}</div></div>`;
 
-R.st = i => `<div class="s"><div class="hd" style="height:84px;align-items:flex-start;padding-top:10px"><b class="bk" onclick="go('sm')">‹ 21</b><div style="text-align:center;margin-top:-4px"><span class="av" style="width:54px;height:54px;border-radius:50%;margin:0 auto;display:block;background:linear-gradient(#a8b9dd,#7d85bf)"></span><span class="nb">${S[i][0]} ›</span></div><b style="width:60px"></b></div><div class="ls" style="padding:10px 14px"><div class="gb">${S[i][1]}</div></div><div class="in2"><b>＋</b><span>短信 · RCS</span></div></div>`;
+R.st = i => {
+  const msgs = SMG[i] || [];
+  let last = '';
+  const body = msgs.map(m => {
+    const t = m[3] !== last ? `<div class="smt">${m[3]}</div>` : '';
+    last = m[3];
+    let bubble;
+    if (m[1] == 't') bubble = `<p>${m[2]}</p>`;
+    else if (m[1] == 'i') bubble = `<p class="smph"><img src="${m[2]}"></p>`;
+    else bubble = `<p class="smst"><img src="${m[2]}"></p>`;
+    const av = m[0] == 'L' ? `<span class="av smav" style="background:#eee;background-image:url(${S[i][4]});background-size:cover;background-position:center"></span>` : '';
+    return `${t}<div class="smrow ${m[0] == 'R' ? 'smR' : 'smL'}">${av}${bubble}</div>`;
+  }).join('');
+  return `<div class="s smv"><div class="hd" style="height:84px;align-items:flex-start;padding-top:10px"><b class="bk" onclick="go('sm')">‹</b><div style="text-align:center;margin-top:-4px"><span class="av" style="width:54px;height:54px;border-radius:50%;margin:0 auto;display:block;background:#eee;background-image:url(${S[i][4]});background-size:cover;background-position:center"></span><span class="nb">${S[i][0]} ›</span></div><b style="width:60px"></b></div><div class="ls smls">${body}</div><div class="in2"><b>＋</b><span>短信 · RCS</span></div></div>`;
+};
 
 R.ph = () => `<div class="s"><div class="hd" style="font-size:28px"><span>最近通话</span></div><div class="ls">${C.map(c => `<div class="r" onclick="go('oc','${c[0]}')"><div><b style="color:${c[1] == '未接' ? '#ff3b30' : 'inherit'}">${c[0]}</b><p>${c[1] == '去电' ? '↗ ' : c[1] == '来电' ? '↙ ' : ''}${c[1]}${c[3] ? ' · ' + c[3] : ''}</p></div><small>${c[2]}</small></div>`).join('')}</div></div>`;
 
